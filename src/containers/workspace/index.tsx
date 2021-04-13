@@ -17,22 +17,37 @@ const createNote = (notesLength: number): INote => ({
 });
 
 const Workspace: React.FC<IProps> = () => {
-  const [notes, setNotes] = useState<INote[]>([]);
+  const [notes, setNotes] = useState<Record<number, INote>>({});
 
   const handleAddNote = useCallback(() => {
-    const newNote = createNote(notes.length);
-    localStorage.setItem(String(notes.length), JSON.stringify(newNote));
-    setNotes((prevState) => [...prevState, newNote]);
+    const notesKeys = Object.keys(notes);
+    const newNote = createNote(notesKeys.length);
+
+    localStorage.setItem(String(notesKeys.length), JSON.stringify(newNote));
+    setNotes({
+      ...notes,
+      [notesKeys.length]: newNote,
+    });
   }, [notes]);
 
-  const notesItems = useMemo(() => notes.map((note, index) => <NoteController key={index} note={note} noteKey={index}/>), [
-    notes,
-  ]);
+  const addNoteToFront = useCallback((noteKey: number) => {
+
+  }, [notes]);
+
+  const notesItems = useMemo(
+    () =>
+      Object.keys(notes).map((key) => (
+        <NoteController key={key} note={notes[+key]} noteKey={+key}/>
+      )), [
+      notes,
+    ]);
 
   useEffect(() => {
-    const notes = Object.keys(localStorage).map((noteKey) => JSON.parse(localStorage[noteKey]));
+    const notes = Object.keys(localStorage).reduce(
+      (acc, key) => ({ ...acc, [+key]: JSON.parse(localStorage[key]) }),
+      {},
+    );
     setNotes(notes);
-    // setNotes(notes.length ? notes : [{ ...DEFAULT_NOTE, text: '22', noteKey: 0 }]);
 
     return () => {
       localStorage.clear();
