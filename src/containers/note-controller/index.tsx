@@ -11,7 +11,8 @@ interface Position {
 
 export interface INoteControllerProps {
   note: INote;
-  noteKey?: number;
+  noteId: string;
+  moveNoteToFront(noteId: string): void;
   writeToStorage?: (value: Record<string, any>) => void;
 }
 
@@ -72,8 +73,9 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
   };
 
   private onMouseUp = (): void => {
-    const { writeToStorage } = this.props;
+    const { writeToStorage, moveNoteToFront, noteId } = this.props;
     const { position } = this.state;
+    moveNoteToFront(noteId);
     writeToStorage && writeToStorage(position);
     this.setState({
       zIndex: 1,
@@ -93,7 +95,6 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
   render(): React.ReactNode {
     const { position, zIndex, text } = this.state;
 
-    const { note } = this.props;
     return (
       <Note
         text={text}

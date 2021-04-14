@@ -2,12 +2,13 @@ import React from 'react';
 import './styles.css';
 
 export interface INote {
+  noteId: string;
   text: string;
   left: number;
   top: number;
 }
 
-type IProps = INote & {
+type IProps = Omit<INote, 'noteId'> & {
   zIndex: number;
   ref?: React.Ref<HTMLDivElement>;
   onMouseDown(event: React.MouseEvent<HTMLDivElement>): void;
@@ -16,6 +17,7 @@ type IProps = INote & {
 };
 
 export const DEFAULT_NOTE: INote = {
+  noteId: '',
   text: '',
   top: 120,
   left: 30,

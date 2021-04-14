@@ -6,22 +6,22 @@ const WithLocalStorage = <P extends object>(WrappedComponent: React.ComponentTyp
 
   return class extends React.Component<WrappedComponentProps> {
 
-    private write = (value: Record<string, any>) => {
-      const { noteKey } = this.props;
-      const itemKey = String(noteKey);
-      const storageItem = localStorage.getItem(itemKey) ?? '';
+    private replaceItem = (value: Record<string, any>): void => {
+      const { noteId } = this.props;
+      const storageItem = localStorage.getItem(noteId) ?? '';
       const item = JSON.parse(storageItem);
       const newItem = {
         ...item,
         ...value,
       }
-      localStorage.setItem(itemKey, JSON.stringify(newItem));
+      localStorage.removeItem(noteId);
+      localStorage.setItem(noteId, JSON.stringify(newItem));
     }
 
     render(): React.ReactNode {
       // const {} = this.props;
       return (
-        <WrappedComponent {...(this.props as P)} writeToStorage={this.write} />
+        <WrappedComponent {...(this.props as P)} writeToStorage={this.replaceItem} />
       )
     }
   }
