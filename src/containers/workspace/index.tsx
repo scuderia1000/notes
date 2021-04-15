@@ -7,7 +7,8 @@ import generateId from '../../utils';
 import WithLocalStorage from '../../components/with-local-storage/WithLocalStorage';
 
 interface IProps {
-  updateItemsProp?: (notes: Record<string, INote>, propName: string) => void;
+  storageUpdateItemsProp?: (notes: Record<string, INote>, propName: string) => void;
+  storageSaveItem?: (itemId: string, item: any) => void;
 }
 
 const NEW_NOTE_OFFSET = 20;
@@ -20,25 +21,25 @@ const createNewNote = (notesLength: number): INote => ({
   order: notesLength,
 });
 
-const Workspace: React.FC<IProps> = ({ updateItemsProp }) => {
+const Workspace: React.FC<IProps> = ({ storageUpdateItemsProp, storageSaveItem }) => {
   const [notes, setNotes] = useState<Record<string, INote>>({});
 
   const createNote = useCallback(() => {
     const notesKeys = Object.keys(notes);
     const newNote = createNewNote(notesKeys.length);
-
-    localStorage.setItem(newNote.noteId, JSON.stringify(newNote));
     setNotes({
       ...notes,
       [newNote.noteId]: newNote,
     });
-  }, [notes]);
+
+    storageSaveItem && storageSaveItem(newNote.noteId, newNote);
+  }, [notes, storageSaveItem]);
 
   const moveNoteToFront = useCallback((noteId: string) => {
     const notesClone = {...notes};
     const notesKeys = Object.keys(notesClone);
     let noteIndex = 0;
-    // change notes order property, because we remove note to the end
+    // change notes order property, because we remove current note to the end
     notesKeys.forEach((noteKey, index) => {
       if (noteKey === noteId) {
         noteIndex = index;
@@ -56,8 +57,9 @@ const Workspace: React.FC<IProps> = ({ updateItemsProp }) => {
       [noteId]: noteForMove,
     }
     setNotes(newNotes);
-    updateItemsProp && updateItemsProp(newNotes, 'order');
-  }, [notes, updateItemsProp]);
+
+    storageUpdateItemsProp && storageUpdateItemsProp(newNotes, 'order');
+  }, [notes, storageUpdateItemsProp]);
 
   const notesItems = useMemo(
     () =>

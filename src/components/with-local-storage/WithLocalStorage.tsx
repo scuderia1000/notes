@@ -22,12 +22,17 @@ const WithLocalStorage = <P extends object>(WrappedComponent: React.ComponentTyp
       });
     }
 
+    private saveItem = (itemId: string, item: any): void => {
+      localStorage.setItem(itemId, JSON.stringify(item));
+    }
+
     render(): React.ReactNode {
       return (
         <WrappedComponent
           {...(this.props as P)}
-          writeToStorage={this.replaceItem}
-          updateItemsProp={this.updateItemsProp} />
+          storageReplaceItem={this.replaceItem}
+          storageSaveItem={this.saveItem}
+          storageUpdateItemsProp={this.updateItemsProp} />
       )
     }
   }
