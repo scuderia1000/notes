@@ -5,11 +5,32 @@
     overflow: hidden;
 }
 
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-height: 6vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: calc(10px + 2vmin);
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
 .trash {
     position: absolute;
-    width: 100px;
-    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     bottom: 0;
     right: 0;
-    background: bisque;
+    padding: 30px;
+}
+
+.button.delete-button:hover {
+    cursor: initial;
+    background-color: initial;
 }

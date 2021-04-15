@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DEFAULT_NOTE, INote } from '../../components/note';
-import './styles.css';
 import AddButton from '../../components/button/AddButton';
 import NoteController from '../../containers/note-controller';
 import { generateId } from '../../utils';
 import WithLocalStorage from '../../components/with-local-storage/WithLocalStorage';
+import { DeleteIcon } from '../../components/icon';
+import Button, { ButtonSize } from '../../components/button/Button';
+import './styles.css';
 
 interface IProps {
   storageUpdateItemsProp?: (notes: Record<string, INote>, propName: string) => void;
@@ -113,9 +115,12 @@ const Workspace: React.FC<IProps> = ({ storageUpdateItemsProp, storageSaveItem, 
 
   return (
     <div className="workspace">
+      <header className="header">Sticky Notes</header>
       <AddButton onClick={createNote}/>
       {notesItems}
-      <div className="trash" />
+      <div className="trash">
+        <Button className="delete-button" icon={<DeleteIcon />} size={ButtonSize.L}/>
+      </div>
     </div>
   )
 }

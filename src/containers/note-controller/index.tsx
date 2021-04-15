@@ -58,7 +58,7 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
         x: event.pageX - noteRect.left,
         y: event.pageY - noteRect.top,
       },
-      zIndex: 1000,
+      zIndex: 999,
     });
     document.addEventListener('mousemove', this.onMouseMove);
   };
@@ -74,7 +74,7 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     });
   };
 
-  private onMouseUp = (event: React.MouseEvent<HTMLDivElement>): void => {
+  private onMouseUp = (): void => {
     document.removeEventListener('mousemove', this.onMouseMove);
 
     const { storageReplaceItem, moveNoteToFront, noteId } = this.props;

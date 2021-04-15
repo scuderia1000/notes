@@ -1,14 +1,25 @@
 import React from 'react';
-import './styles/Button.css'
+import './styles/Button.css';
+
+export enum ButtonSize {
+  XS = 'XS',
+  S = 'S',
+  M = 'M',
+  L = 'L',
+}
 
 interface IProps {
-  onClick(): void;
+  className?: string;
+  size?: ButtonSize;
+  onClick?: () => void;
   icon?: JSX.Element;
 }
 
-const Button: React.FC<IProps> = ({ onClick, icon }) => {
+const mainCss = 'button'
+
+const Button: React.FC<IProps> = ({ onClick, icon, className = '', size = ButtonSize.M }) => {
   return (
-    <div className="button" onClick={onClick}>
+    <div className={`${mainCss} ${className} ${mainCss}_size-${size}`} onClick={onClick}>
       {icon}
     </div>
   )
