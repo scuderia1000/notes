@@ -4,3 +4,12 @@
     height: 100%;
     overflow: hidden;
 }
+
+.trash {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    bottom: 0;
+    right: 0;
+    background: bisque;
+}

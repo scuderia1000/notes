@@ -3,12 +3,13 @@ import { DEFAULT_NOTE, INote } from '../../components/note';
 import './styles.css';
 import AddButton from '../../components/button/AddButton';
 import NoteController from '../../containers/note-controller';
-import generateId from '../../utils';
+import { generateId } from '../../utils';
 import WithLocalStorage from '../../components/with-local-storage/WithLocalStorage';
 
 interface IProps {
   storageUpdateItemsProp?: (notes: Record<string, INote>, propName: string) => void;
   storageSaveItem?: (itemId: string, item: any) => void;
+  storageDeleteItem?: (itemId: string) => void;
 }
 
 const NEW_NOTE_OFFSET = 20;
@@ -21,7 +22,22 @@ const createNewNote = (notesLength: number): INote => ({
   order: notesLength,
 });
 
-const Workspace: React.FC<IProps> = ({ storageUpdateItemsProp, storageSaveItem }) => {
+// change notes order property, because we remove current note to the end
+const changeNotesOrder = (noteId: string, notes: Record<string, INote>): void => {
+  const notesKeys = Object.keys(notes);
+  let noteIndex = 0;
+  notesKeys.forEach((noteKey, index) => {
+    if (noteKey === noteId) {
+      noteIndex = index;
+      notes[noteKey].order = notesKeys.length - 1;
+    }
+    if (index > noteIndex) {
+      notes[noteKey].order = index - 1;
+    }
+  });
+}
+
+const Workspace: React.FC<IProps> = ({ storageUpdateItemsProp, storageSaveItem, storageDeleteItem }) => {
   const [notes, setNotes] = useState<Record<string, INote>>({});
 
   const createNote = useCallback(() => {
@@ -37,18 +53,9 @@ const Workspace: React.FC<IProps> = ({ storageUpdateItemsProp, storageSaveItem }
 
   const moveNoteToFront = useCallback((noteId: string) => {
     const notesClone = {...notes};
-    const notesKeys = Object.keys(notesClone);
-    let noteIndex = 0;
-    // change notes order property, because we remove current note to the end
-    notesKeys.forEach((noteKey, index) => {
-      if (noteKey === noteId) {
-        noteIndex = index;
-        notesClone[noteKey].order = notesKeys.length - 1;
-      }
-      if (index > noteIndex) {
-        notesClone[noteKey].order = index - 1;
-      }
-    });
+
+    changeNotesOrder(noteId, notesClone);
+
     const noteForMove = {...notesClone[noteId]};
     delete notesClone[noteId];
 
@@ -61,12 +68,31 @@ const Workspace: React.FC<IProps> = ({ storageUpdateItemsProp, storageSaveItem }
     storageUpdateItemsProp && storageUpdateItemsProp(newNotes, 'order');
   }, [notes, storageUpdateItemsProp]);
 
+  const deleteNote = useCallback((noteId: string) => {
+    const notesClone = {...notes};
+
+    changeNotesOrder(noteId, notesClone);
+
+    delete notesClone[noteId];
+    const newNotes = {
+      ...notesClone,
+    }
+    setNotes(newNotes);
+
+    storageDeleteItem && storageDeleteItem(noteId);
+  }, [notes, storageDeleteItem]);
+
   const notesItems = useMemo(
     () =>
       Object.keys(notes).map((key) => (
-        <NoteController key={key} note={notes[key]} noteId={key} moveNoteToFront={moveNoteToFront}/>
+        <NoteController
+          key={key}
+          note={notes[key]}
+          noteId={key}
+          moveNoteToFront={moveNoteToFront}
+          deleteNote={deleteNote} />
       )), [
-      notes, moveNoteToFront,
+      notes, moveNoteToFront, deleteNote,
     ]);
 
   useEffect(() => {
@@ -89,6 +115,7 @@ const Workspace: React.FC<IProps> = ({ storageUpdateItemsProp, storageSaveItem }
     <div className="workspace">
       <AddButton onClick={createNote}/>
       {notesItems}
+      <div className="trash" />
     </div>
   )
 }

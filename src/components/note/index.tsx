@@ -13,7 +13,7 @@ type IProps = Omit<INote, 'noteId' | 'order'> & {
   zIndex: number;
   ref?: React.Ref<HTMLDivElement>;
   onMouseDown(event: React.MouseEvent<HTMLDivElement>): void;
-  onMouseUp(): void;
+  onMouseUp(event: React.MouseEvent<HTMLDivElement>): void;
   onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>): void;
 };
 

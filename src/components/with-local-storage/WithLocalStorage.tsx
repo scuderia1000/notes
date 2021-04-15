@@ -26,12 +26,17 @@ const WithLocalStorage = <P extends object>(WrappedComponent: React.ComponentTyp
       localStorage.setItem(itemId, JSON.stringify(item));
     }
 
+    private deleteItem = (itemId: string): void => {
+      localStorage.removeItem(itemId);
+    }
+
     render(): React.ReactNode {
       return (
         <WrappedComponent
           {...(this.props as P)}
           storageReplaceItem={this.replaceItem}
           storageSaveItem={this.saveItem}
+          storageDeleteItem={this.deleteItem}
           storageUpdateItemsProp={this.updateItemsProp} />
       )
     }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Note, { INote } from '../../components/note';
 import WithLocalStorage from '../../components/with-local-storage/WithLocalStorage';
+import { isIntersects } from '../../utils';
 
 type NotePosition = Pick<INote, 'left' | 'top'>;
 
@@ -13,6 +14,7 @@ export interface INoteControllerProps {
   note: INote;
   noteId: string;
   moveNoteToFront(noteId: string): void;
+  deleteNote(noteId: string): void;
   storageReplaceItem?: (noteId: string, value: Record<string, any>) => void;
 }
 
@@ -72,15 +74,19 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     });
   };
 
-  private onMouseUp = (): void => {
+  private onMouseUp = (event: React.MouseEvent<HTMLDivElement>): void => {
+    document.removeEventListener('mousemove', this.onMouseMove);
+
     const { storageReplaceItem, moveNoteToFront, noteId } = this.props;
+    const isNoteDeleted = this.deleteNoteIfNeeded();
+    if (isNoteDeleted) return;
+
     const { position } = this.state;
     moveNoteToFront(noteId);
     storageReplaceItem && storageReplaceItem(noteId, position);
     this.setState({
       zIndex: 1,
     })
-    document.removeEventListener('mousemove', this.onMouseMove);
   };
 
   private onTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
@@ -91,6 +97,22 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     });
     storageReplaceItem && storageReplaceItem(noteId, { text: value });
   };
+
+  private deleteNoteIfNeeded = (): boolean => {
+    const { noteId, deleteNote } = this.props;
+    const noteEl = this.noteRef.current;
+    const trashEl = document.getElementsByClassName('trash')[0];
+    if (!noteEl || !trashEl) return false;
+
+    const note = noteEl.getBoundingClientRect();
+    const trash = trashEl.getBoundingClientRect();
+    const isNoteNeedDeleted = isIntersects(note, trash);
+    if (isNoteNeedDeleted) {
+      deleteNote(noteId);
+      return true;
+    }
+    return false;
+  }
 
   render(): React.ReactNode {
     const { position, zIndex, text } = this.state;
