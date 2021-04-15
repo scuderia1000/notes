@@ -1,27 +1,33 @@
 import React from 'react';
-import { INoteControllerProps } from '../../containers/note-controller';
+import { INote } from '../note';
 
 const WithLocalStorage = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
-  type WrappedComponentProps = P & INoteControllerProps;
+  return class extends React.Component<P> {
 
-  return class extends React.Component<WrappedComponentProps> {
-
-    private replaceItem = (value: Record<string, any>): void => {
-      const { noteId } = this.props;
+    private replaceItem = (noteId: string, value: Record<string, any>): void => {
       const storageItem = localStorage.getItem(noteId) ?? '';
       const item = JSON.parse(storageItem);
       const newItem = {
         ...item,
         ...value,
       }
-      localStorage.removeItem(noteId);
       localStorage.setItem(noteId, JSON.stringify(newItem));
     }
 
+    private updateItemsProp = (notes: Record<string, INote>, propName: string): void => {
+      Object.keys(notes).forEach((noteId) => {
+        const note = notes[noteId];
+        // @ts-ignore
+        this.replaceItem(noteId, { [propName]: note[propName] });
+      });
+    }
+
     render(): React.ReactNode {
-      // const {} = this.props;
       return (
-        <WrappedComponent {...(this.props as P)} writeToStorage={this.replaceItem} />
+        <WrappedComponent
+          {...(this.props as P)}
+          writeToStorage={this.replaceItem}
+          updateItemsProp={this.updateItemsProp} />
       )
     }
   }

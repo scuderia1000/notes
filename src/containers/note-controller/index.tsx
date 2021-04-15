@@ -13,7 +13,7 @@ export interface INoteControllerProps {
   note: INote;
   noteId: string;
   moveNoteToFront(noteId: string): void;
-  writeToStorage?: (value: Record<string, any>) => void;
+  writeToStorage?: (noteId: string, value: Record<string, any>) => void;
 }
 
 interface IState {
@@ -76,7 +76,7 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     const { writeToStorage, moveNoteToFront, noteId } = this.props;
     const { position } = this.state;
     moveNoteToFront(noteId);
-    writeToStorage && writeToStorage(position);
+    writeToStorage && writeToStorage(noteId, position);
     this.setState({
       zIndex: 1,
     })
@@ -84,12 +84,12 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
   };
 
   private onTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-    const { writeToStorage } = this.props;
+    const { writeToStorage, noteId,  } = this.props;
     const value = event.currentTarget.value;
     this.setState({
       text: value,
     });
-    writeToStorage && writeToStorage({ text: value });
+    writeToStorage && writeToStorage(noteId, { text: value });
   };
 
   render(): React.ReactNode {

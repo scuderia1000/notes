@@ -6,9 +6,10 @@ export interface INote {
   text: string;
   left: number;
   top: number;
+  order: number;
 }
 
-type IProps = Omit<INote, 'noteId'> & {
+type IProps = Omit<INote, 'noteId' | 'order'> & {
   zIndex: number;
   ref?: React.Ref<HTMLDivElement>;
   onMouseDown(event: React.MouseEvent<HTMLDivElement>): void;
@@ -21,6 +22,7 @@ export const DEFAULT_NOTE: INote = {
   text: '',
   top: 120,
   left: 30,
+  order: 0,
 };
 
 const Note: React.FC<IProps> = React.forwardRef<HTMLDivElement, IProps>(
