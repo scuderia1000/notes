@@ -1,9 +1,0 @@
-.button__add {
-    position: absolute;
-    top: 60px;
-    left: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 5px;
-}
