@@ -14,11 +14,9 @@ const WithLocalStorage = <P extends object>(WrappedComponent: React.ComponentTyp
       localStorage.setItem(noteId, JSON.stringify(newItem));
     };
 
-    private updateItemsProp = (notes: Record<string, INote>, propName: string): void => {
+    private updateItemsProp = (notes: Record<string, INote>, propName: keyof INote): void => {
       Object.keys(notes).forEach((noteId) => {
         const note = notes[noteId];
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         this.replaceItem(noteId, { [propName]: note[propName] });
       });
     };

@@ -7,13 +7,14 @@ export interface INote {
   left: number;
   top: number;
   order: number;
+  width: number;
+  height: number;
 }
 
 type IProps = Omit<INote, 'noteId' | 'order'> & {
   zIndex: number;
   ref?: React.Ref<HTMLDivElement>;
   onMouseDown(event: React.MouseEvent<HTMLDivElement>): void;
-  onMouseUp(): void;
   onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>): void;
 };
 
@@ -23,20 +24,21 @@ export const DEFAULT_NOTE: INote = {
   top: 120,
   left: 30,
   order: 0,
+  width: 200,
+  height: 200,
 };
 
 // eslint-disable-next-line react/display-name
 const Note: React.FC<IProps> = React.forwardRef<HTMLDivElement, IProps>(
   (props, ref): JSX.Element => {
-    const { text, left, top, zIndex, onTextChange, onMouseDown, onMouseUp } = props;
+    const { text, left, top, zIndex, onTextChange, onMouseDown, width, height } = props;
 
     return (
       <div
         ref={ref}
         className="note"
-        style={{ left, top, zIndex }}
+        style={{ left, top, zIndex, width, height }}
         onMouseDown={onMouseDown}
-        onMouseUp={onMouseUp}
       >
         <textarea value={text} onChange={onTextChange} />
       </div>
