@@ -23,6 +23,7 @@ interface IState {
   text: string;
   position: NotePosition;
   mouseNoteOffset: Position;
+  observer?: IntersectionObserver;
 }
 
 class NoteController extends React.Component<INoteControllerProps, IState> {
@@ -44,6 +45,7 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
         x: 0,
         y: 0,
       },
+      observer: undefined,
     };
     this.noteRef = React.createRef();
   }
@@ -70,7 +72,7 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     const left = event.pageX - mouseNoteOffsetX;
     const top = event.pageY - mouseNoteOffsetY;
     this.setState({
-      position: { left, top }
+      position: { left, top },
     });
   };
 
@@ -86,12 +88,12 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     storageReplaceItem && storageReplaceItem(noteId, position);
     this.setState({
       zIndex: 1,
-    })
+    });
   };
 
   private onTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-    const { storageReplaceItem, noteId,  } = this.props;
-    const value = event.currentTarget.value;
+    const { storageReplaceItem, noteId } = this.props;
+    const { value } = event.currentTarget;
     this.setState({
       text: value,
     });
@@ -112,7 +114,7 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
       return true;
     }
     return false;
-  }
+  };
 
   render(): React.ReactNode {
     const { position, zIndex, text } = this.state;
@@ -126,8 +128,9 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
         zIndex={zIndex}
         onTextChange={this.onTextChange}
         onMouseDown={this.onMouseDown}
-        onMouseUp={this.onMouseUp} />
-    )
+        onMouseUp={this.onMouseUp}
+      />
+    );
   }
 }
 

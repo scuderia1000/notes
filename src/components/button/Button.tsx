@@ -15,14 +15,14 @@ interface IProps {
   icon?: JSX.Element;
 }
 
-const mainCss = 'button'
+const mainCss = 'button';
 
 const Button: React.FC<IProps> = ({ onClick, icon, className = '', size = ButtonSize.M }) => {
   return (
     <div className={`${mainCss} ${className} ${mainCss}_size-${size}`} onClick={onClick}>
       {icon}
     </div>
-  )
-}
+  );
+};
 
 export default Button;

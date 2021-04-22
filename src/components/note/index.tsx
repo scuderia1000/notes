@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import './styles.css';
 
 export interface INote {
@@ -25,24 +25,23 @@ export const DEFAULT_NOTE: INote = {
   order: 0,
 };
 
+// eslint-disable-next-line react/display-name
 const Note: React.FC<IProps> = React.forwardRef<HTMLDivElement, IProps>(
   (props, ref): JSX.Element => {
-    const {
-      text,
-      left,
-      top,
-      zIndex,
-      onTextChange,
-      onMouseDown,
-      onMouseUp,
-    } = props;
+    const { text, left, top, zIndex, onTextChange, onMouseDown, onMouseUp } = props;
 
     return (
-      <div ref={ref} className="note" style={{ left, top, zIndex }} onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+      <div
+        ref={ref}
+        className="note"
+        style={{ left, top, zIndex }}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+      >
         <textarea value={text} onChange={onTextChange} />
       </div>
-    )
-  }
+    );
+  },
 );
 
 export default Note;
