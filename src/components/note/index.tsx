@@ -44,7 +44,7 @@ const Note: React.FC<IProps> = React.forwardRef<HTMLDivElement, IProps>(
         style={{ left, top, zIndex, width, height }}
         onMouseDown={onMouseDown}
       >
-        <textarea value={text} onChange={onTextChange} />
+        <textarea className="text-input" value={text} onChange={onTextChange} />
       </div>
     );
   },

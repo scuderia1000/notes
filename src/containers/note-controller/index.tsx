@@ -188,6 +188,29 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     });
   };
 
+  private onClickOutsideNote = (event: MouseEvent): void => {
+    const { isResizeShown } = this.state;
+    const { target } = event;
+    if (!target) return;
+
+    if (
+      !['resize', 'note', 'text-input', 'resize-corner'].includes((target as Element).className) &&
+      isResizeShown
+    ) {
+      this.setState({
+        isResizeShown: false,
+      });
+    }
+  };
+
+  public componentDidMount(): void {
+    document.addEventListener('click', this.onClickOutsideNote);
+  }
+
+  public componentWillUnmount(): void {
+    document.removeEventListener('click', this.onClickOutsideNote);
+  }
+
   render(): React.ReactNode {
     const { position, zIndex, text, isResizeShown, width, height } = this.state;
 
