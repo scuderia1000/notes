@@ -9,6 +9,8 @@ export interface INote {
   order: number;
   width: number;
   height: number;
+  minWidth?: number;
+  minHeight?: number;
 }
 
 type IProps = Omit<INote, 'noteId' | 'order'> & {
@@ -26,6 +28,8 @@ export const DEFAULT_NOTE: INote = {
   order: 0,
   width: 200,
   height: 200,
+  minWidth: 50,
+  minHeight: 50,
 };
 
 // eslint-disable-next-line react/display-name

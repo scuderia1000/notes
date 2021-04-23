@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Note, { INote } from '../../components/note';
+import Note, { DEFAULT_NOTE, INote } from '../../components/note';
 import WithLocalStorage from '../../components/with-local-storage/WithLocalStorage';
 import { isIntersects } from '../../utils';
 import './style.css';
@@ -28,6 +28,8 @@ interface IState {
   isResizeShown: boolean;
   width: number;
   height: number;
+  initialWidth: number;
+  initialHeight: number;
 }
 
 class NoteController extends React.Component<INoteControllerProps, IState> {
@@ -53,8 +55,10 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
       },
       observer: undefined,
       isResizeShown: false,
-      width: 200,
-      height: 200,
+      width: DEFAULT_NOTE.width,
+      height: DEFAULT_NOTE.height,
+      initialWidth: DEFAULT_NOTE.width,
+      initialHeight: DEFAULT_NOTE.height,
     };
     this.noteRef = React.createRef();
     this.resizeRef = React.createRef();
@@ -152,21 +156,35 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
   };
 
   private onResizeMouseMove = (event: MouseEvent): void => {
-    const { mouseNoteOffset, position } = this.state;
+    const { mouseNoteOffset, initialWidth, initialHeight } = this.state;
     const { x: mouseNoteOffsetX, y: mouseNoteOffsetY } = mouseNoteOffset;
 
+    const deltaX = event.pageX - mouseNoteOffsetX;
+    const deltaY = event.pageY - mouseNoteOffsetY;
+    let width = initialWidth + deltaX;
+    let height = initialHeight + deltaY;
+    if (DEFAULT_NOTE.minWidth && width < DEFAULT_NOTE.minWidth) {
+      width = DEFAULT_NOTE.minWidth;
+    }
+    if (DEFAULT_NOTE.minHeight && height < DEFAULT_NOTE.minHeight) {
+      height = DEFAULT_NOTE.minHeight;
+    }
+
     this.setState({
-      width: position.left + (event.pageX - mouseNoteOffsetX),
-      height: position.top + event.pageY - mouseNoteOffsetY,
+      width,
+      height,
     });
   };
 
   private onResizeMouseUp = (): void => {
+    const { width, height } = this.state;
     document.removeEventListener('mousemove', this.onResizeMouseMove);
     document.removeEventListener('mouseup', this.onResizeMouseUp);
 
     this.setState({
       zIndex: 1,
+      initialWidth: width,
+      initialHeight: height,
     });
   };
 
@@ -193,6 +211,8 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
             left: position.left - 10,
             top: position.top - 10,
             opacity: isResizeShown ? 1 : 0,
+            width: width + 20,
+            height: height + 30,
           }}
         >
           <div className="resize-corner" onMouseDown={this.onResizeMouseDown} />
