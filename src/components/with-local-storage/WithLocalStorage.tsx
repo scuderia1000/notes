@@ -1,10 +1,12 @@
 import React from 'react';
 import { INote } from '../note';
 
-const WithLocalStorage = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
+const WithLocalStorage = <P extends object>(
+  WrappedComponent: React.ComponentType<P>,
+): typeof React.Component => {
   // eslint-disable-next-line react/display-name
   return class extends React.Component<P> {
-    private replaceItem = (noteId: string, value: Record<string, any>): void => {
+    private replaceItem = (noteId: string, value: Record<string, INote[keyof INote]>): void => {
       const storageItem = localStorage.getItem(noteId) ?? '';
       const item = JSON.parse(storageItem);
       const newItem = {
@@ -21,7 +23,7 @@ const WithLocalStorage = <P extends object>(WrappedComponent: React.ComponentTyp
       });
     };
 
-    private saveItem = (itemId: string, item: any): void => {
+    private saveItem = (itemId: string, item: INote): void => {
       localStorage.setItem(itemId, JSON.stringify(item));
     };
 

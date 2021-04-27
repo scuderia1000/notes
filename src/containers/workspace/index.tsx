@@ -1,16 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DEFAULT_NOTE, INote } from '../../components/note';
 import AddButton from '../../components/button/AddButton';
-import NoteController from '../note-controller';
 import { generateId } from '../../utils';
 import WithLocalStorage from '../../components/with-local-storage/WithLocalStorage';
 import { DeleteIcon } from '../../components/icon';
 import Button, { ButtonSize } from '../../components/button/Button';
 import './styles.css';
+import BaseController from '../controllers/BaseController';
 
 interface IProps {
   storageUpdateItemsProp?: (notes: Record<string, INote>, propName: string) => void;
-  storageSaveItem?: (itemId: string, item: any) => void;
+  storageSaveItem?: (itemId: string, item: INote) => void;
   storageDeleteItem?: (itemId: string) => void;
 }
 
@@ -94,20 +94,6 @@ const Workspace: React.FC<IProps> = ({
     [notes, storageDeleteItem],
   );
 
-  const notesItems = useMemo(
-    () =>
-      Object.keys(notes).map((key) => (
-        <NoteController
-          key={key}
-          note={notes[key]}
-          noteId={key}
-          moveNoteToFront={moveNoteToFront}
-          deleteNote={deleteNote}
-        />
-      )),
-    [notes, moveNoteToFront, deleteNote],
-  );
-
   useEffect(() => {
     const notes: Record<string, INote> = Object.keys(localStorage).reduce(
       (acc, key) => ({ ...acc, [key]: JSON.parse(localStorage[key]) }),
@@ -128,7 +114,7 @@ const Workspace: React.FC<IProps> = ({
     <div className="workspace">
       <header className="header">Sticky Notes</header>
       <AddButton onClick={createNote} />
-      {notesItems}
+      <BaseController items={notes} moveNoteToFront={moveNoteToFront} deleteNote={deleteNote} />
       <div className="trash">
         <Button className="delete-button" icon={<DeleteIcon />} size={ButtonSize.L} />
       </div>

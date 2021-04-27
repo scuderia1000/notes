@@ -1,15 +1,14 @@
 export const generateId = (): string => {
-  const S4 = function () {
-    // eslint-disable-next-line no-bitwise
-    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-  };
+  // eslint-disable-next-line no-bitwise
+  const S4 = (): string => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+
   return `${S4() + S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`;
 };
 
-export const isIntersects = function (
+export const isIntersects = (
   boundingClientRectA: DOMRect,
   boundingClientRectB: DOMRect,
-): boolean {
+): boolean => {
   const rectA = {
     x: boundingClientRectA.left,
     x1: boundingClientRectA.left + boundingClientRectA.width,

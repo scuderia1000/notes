@@ -15,9 +15,11 @@ export interface INote {
 
 type IProps = Omit<INote, 'noteId' | 'order'> & {
   zIndex: number;
-  ref?: React.Ref<HTMLDivElement>;
-  onMouseDown(event: React.MouseEvent<HTMLDivElement>): void;
+  isEditMode: boolean;
+  ref?: React.Ref<HTMLTextAreaElement>;
+  onMouseDown(event: React.MouseEvent<HTMLTextAreaElement>): void;
   onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>): void;
+  onDblClick(): void;
 };
 
 export const DEFAULT_NOTE: INote = {
@@ -33,19 +35,32 @@ export const DEFAULT_NOTE: INote = {
 };
 
 // eslint-disable-next-line react/display-name
-const Note: React.FC<IProps> = React.forwardRef<HTMLDivElement, IProps>(
+const Note: React.FC<IProps> = React.forwardRef<HTMLTextAreaElement, IProps>(
   (props, ref): JSX.Element => {
-    const { text, left, top, zIndex, onTextChange, onMouseDown, width, height } = props;
+    const {
+      text,
+      left,
+      top,
+      zIndex,
+      onTextChange,
+      onMouseDown,
+      width,
+      height,
+      onDblClick,
+      isEditMode,
+    } = props;
 
     return (
-      <div
+      <textarea
         ref={ref}
         className="note"
         style={{ left, top, zIndex, width, height }}
+        value={text}
+        readOnly={!isEditMode}
         onMouseDown={onMouseDown}
-      >
-        <textarea className="text-input" value={text} onChange={onTextChange} />
-      </div>
+        onChange={onTextChange}
+        onDoubleClick={onDblClick}
+      />
     );
   },
 );

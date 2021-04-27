@@ -45,6 +45,7 @@ module.exports = {
     'no-param-reassign': 'off',
     'react/prop-types': 'off',
     'no-unused-expressions': 'off',
+    'no-debugger': 'off',
   },
   settings: {
     'import/resolver': {

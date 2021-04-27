@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import Workspace from './containers/workspace';
 
-function App() {
+function App(): JSX.Element {
   return (
     <div className="app">
       <Workspace />

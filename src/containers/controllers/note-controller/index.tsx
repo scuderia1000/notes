@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Note, { DEFAULT_NOTE, INote } from '../../components/note';
-import WithLocalStorage from '../../components/with-local-storage/WithLocalStorage';
-import { isIntersects } from '../../utils';
+import Note, { DEFAULT_NOTE, INote } from '../../../components/note';
+import WithLocalStorage from '../../../components/with-local-storage/WithLocalStorage';
+import { isIntersects } from '../../../utils';
 import './style.css';
 
 type NotePosition = Pick<INote, 'left' | 'top'>;
@@ -16,7 +16,9 @@ export interface INoteControllerProps {
   noteId: string;
   moveNoteToFront(noteId: string): void;
   deleteNote(noteId: string): void;
-  storageReplaceItem?: (noteId: string, value: Record<string, any>) => void;
+  storageReplaceItem?: (noteId: string, value: Record<string, INote[keyof INote]>) => void;
+  isSelected: boolean;
+  setSelectedNoteId(id: string): void;
 }
 
 interface IState {
@@ -30,10 +32,11 @@ interface IState {
   height: number;
   initialWidth: number;
   initialHeight: number;
+  isEditMode: boolean;
 }
 
 class NoteController extends React.Component<INoteControllerProps, IState> {
-  readonly noteRef: React.RefObject<HTMLDivElement>;
+  readonly noteRef: React.RefObject<HTMLTextAreaElement>;
 
   readonly resizeRef: React.RefObject<HTMLDivElement>;
 
@@ -59,15 +62,16 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
       height: DEFAULT_NOTE.height,
       initialWidth: DEFAULT_NOTE.width,
       initialHeight: DEFAULT_NOTE.height,
+      isEditMode: false,
     };
     this.noteRef = React.createRef();
     this.resizeRef = React.createRef();
   }
 
-  private onMouseDown = (event: React.MouseEvent<HTMLDivElement>): void => {
+  private onMouseDown = (event: React.MouseEvent<HTMLTextAreaElement>): void => {
+    const { setSelectedNoteId, noteId } = this.props;
     const noteEl = this.noteRef.current;
     if (!noteEl) return;
-
     const noteRect = noteEl.getBoundingClientRect();
     this.setState({
       mouseNoteOffset: {
@@ -79,6 +83,8 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     });
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
+
+    setSelectedNoteId(noteId);
   };
 
   private onMouseMove = (event: MouseEvent): void => {
@@ -188,34 +194,32 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     });
   };
 
-  private onClickOutsideNote = (event: MouseEvent): void => {
-    const { isResizeShown } = this.state;
-    const { target } = event;
-    if (!target) return;
-
-    if (
-      !['resize', 'note', 'text-input', 'resize-corner'].includes((target as Element).className) &&
-      isResizeShown
-    ) {
-      this.setState({
-        isResizeShown: false,
-      });
-    }
+  private onDblClick = (): void => {
+    this.setState({
+      isEditMode: true,
+    });
   };
 
-  public componentDidMount(): void {
-    document.addEventListener('click', this.onClickOutsideNote);
-  }
-
-  public componentWillUnmount(): void {
-    document.removeEventListener('click', this.onClickOutsideNote);
-  }
-
   render(): React.ReactNode {
-    const { position, zIndex, text, isResizeShown, width, height } = this.state;
+    const { isSelected } = this.props;
+    const { position, zIndex, text, width, height, isEditMode } = this.state;
 
     return (
       <>
+        <div
+          className="resize"
+          ref={this.resizeRef}
+          style={{
+            left: position.left - 10,
+            top: position.top - 10,
+            opacity: isSelected ? 1 : 0,
+            width: width + 20,
+            height: height + 30,
+            zIndex,
+          }}
+        >
+          <div className="resize-corner" onMouseDown={this.onResizeMouseDown} />
+        </div>
         <Note
           text={text}
           left={position.left}
@@ -224,22 +228,11 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
           zIndex={zIndex}
           width={width}
           height={height}
+          isEditMode={isEditMode}
           onTextChange={this.onTextChange}
           onMouseDown={this.onMouseDown}
+          onDblClick={this.onDblClick}
         />
-        <div
-          className="resize"
-          ref={this.resizeRef}
-          style={{
-            left: position.left - 10,
-            top: position.top - 10,
-            opacity: isResizeShown ? 1 : 0,
-            width: width + 20,
-            height: height + 30,
-          }}
-        >
-          <div className="resize-corner" onMouseDown={this.onResizeMouseDown} />
-        </div>
       </>
     );
   }
