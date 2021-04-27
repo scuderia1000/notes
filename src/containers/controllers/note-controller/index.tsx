@@ -58,10 +58,10 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
       },
       observer: undefined,
       isResizeShown: false,
-      width: DEFAULT_NOTE.width,
-      height: DEFAULT_NOTE.height,
-      initialWidth: DEFAULT_NOTE.width,
-      initialHeight: DEFAULT_NOTE.height,
+      width: note.width,
+      height: note.height,
+      initialWidth: note.width,
+      initialHeight: note.height,
       isEditMode: false,
     };
     this.noteRef = React.createRef();
@@ -106,6 +106,8 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     this.setState({
       position: { left, top },
     });
+
+    event.preventDefault();
   };
 
   private onMouseUp = (): void => {
@@ -180,9 +182,12 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
       width,
       height,
     });
+
+    event.preventDefault();
   };
 
   private onResizeMouseUp = (): void => {
+    const { storageReplaceItem, noteId } = this.props;
     const { width, height } = this.state;
     document.removeEventListener('mousemove', this.onResizeMouseMove);
     document.removeEventListener('mouseup', this.onResizeMouseUp);
@@ -192,6 +197,8 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
       initialWidth: width,
       initialHeight: height,
     });
+
+    storageReplaceItem && storageReplaceItem(noteId, { width, height });
   };
 
   private onDblClick = (): void => {

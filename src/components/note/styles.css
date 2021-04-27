@@ -1,16 +1,13 @@
 .note {
-  display: flex;
-  align-items: flex-start;
   position: absolute;
   width: 200px;
   height: 200px;
-  text-align: center;
 }
 
 textarea {
   width: 100%;
   height: 100%;
-  font-size: 0.5em;
+  font-size: 1.5em;
   background: #ffff88;
   resize: none;
   border: 1px solid #e8e8e8;

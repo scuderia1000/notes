@@ -1,6 +1,14 @@
 import React from 'react';
 import { INote } from '../note';
 
+export interface StorageProps {
+  storageUpdateItemsProp: (notes: Record<string, INote>, propName: string) => void;
+  storageSaveItem: (itemId: string, item: INote) => void;
+  storageDeleteItem: (itemId: string) => void;
+  storageGetAll: () => Record<string, INote>;
+  storageClearAll: () => void;
+}
+
 const WithLocalStorage = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
 ): typeof React.Component => {
@@ -31,6 +39,14 @@ const WithLocalStorage = <P extends object>(
       localStorage.removeItem(itemId);
     };
 
+    private getAllNotes = (): Record<string, INote> =>
+      Object.keys(localStorage).reduce(
+        (acc, key) => ({ ...acc, [key]: JSON.parse(localStorage[key]) }),
+        {},
+      );
+
+    private clearAll = (): void => localStorage.clear();
+
     render(): React.ReactNode {
       return (
         <WrappedComponent
@@ -39,6 +55,8 @@ const WithLocalStorage = <P extends object>(
           storageSaveItem={this.saveItem}
           storageDeleteItem={this.deleteItem}
           storageUpdateItemsProp={this.updateItemsProp}
+          storageGetAll={this.getAllNotes}
+          storageClearAll={this.clearAll}
         />
       );
     }

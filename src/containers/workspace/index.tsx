@@ -2,17 +2,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { DEFAULT_NOTE, INote } from '../../components/note';
 import AddButton from '../../components/button/AddButton';
 import { generateId } from '../../utils';
-import WithLocalStorage from '../../components/with-local-storage/WithLocalStorage';
+import WithLocalStorage, {
+  StorageProps,
+} from '../../components/with-local-storage/WithLocalStorage';
 import { DeleteIcon } from '../../components/icon';
 import Button, { ButtonSize } from '../../components/button/Button';
 import './styles.css';
 import BaseController from '../controllers/BaseController';
 
-interface IProps {
-  storageUpdateItemsProp?: (notes: Record<string, INote>, propName: string) => void;
-  storageSaveItem?: (itemId: string, item: INote) => void;
-  storageDeleteItem?: (itemId: string) => void;
-}
+type IProps = StorageProps;
 
 const NEW_NOTE_OFFSET = 20;
 
@@ -43,6 +41,8 @@ const Workspace: React.FC<IProps> = ({
   storageUpdateItemsProp,
   storageSaveItem,
   storageDeleteItem,
+  storageGetAll,
+  storageClearAll,
 }) => {
   const [notes, setNotes] = useState<Record<string, INote>>({});
 
@@ -54,7 +54,7 @@ const Workspace: React.FC<IProps> = ({
       [newNote.noteId]: newNote,
     });
 
-    storageSaveItem && storageSaveItem(newNote.noteId, newNote);
+    storageSaveItem(newNote.noteId, newNote);
   }, [notes, storageSaveItem]);
 
   const moveNoteToFront = useCallback(
@@ -72,7 +72,7 @@ const Workspace: React.FC<IProps> = ({
       };
       setNotes(newNotes);
 
-      storageUpdateItemsProp && storageUpdateItemsProp(newNotes, 'order');
+      storageUpdateItemsProp(newNotes, 'order');
     },
     [notes, storageUpdateItemsProp],
   );
@@ -89,25 +89,20 @@ const Workspace: React.FC<IProps> = ({
       };
       setNotes(newNotes);
 
-      storageDeleteItem && storageDeleteItem(noteId);
+      storageDeleteItem(noteId);
     },
     [notes, storageDeleteItem],
   );
 
   useEffect(() => {
-    const notes: Record<string, INote> = Object.keys(localStorage).reduce(
-      (acc, key) => ({ ...acc, [key]: JSON.parse(localStorage[key]) }),
-      {},
-    );
+    const notes = storageGetAll();
     const notesByOrder = Object.keys(notes)
       .sort((a, b) => notes[a].order - notes[b].order)
       .reduce((acc, key) => ({ ...acc, [key]: notes[key] }), {});
 
     setNotes(notesByOrder);
 
-    return () => {
-      localStorage.clear();
-    };
+    return () => storageClearAll();
   }, []);
 
   return (
@@ -120,6 +115,14 @@ const Workspace: React.FC<IProps> = ({
       </div>
     </div>
   );
+};
+
+Workspace.defaultProps = {
+  storageUpdateItemsProp: (): void => undefined,
+  storageSaveItem: (): void => undefined,
+  storageDeleteItem: (): void => undefined,
+  storageGetAll: (): Record<string, INote> => ({}),
+  storageClearAll: (): void => undefined,
 };
 
 export default WithLocalStorage(Workspace);
