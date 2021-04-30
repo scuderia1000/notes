@@ -3,7 +3,6 @@ import Note, { INote } from '../../../components/note';
 import WithLocalStorage from '../../../components/local-storage/WithLocalStorage';
 import { isIntersects } from '../../../utils';
 import { IPosition } from '../../../types';
-import WithResize from '../../../components/with-resize/WithResize';
 
 type NotePosition = Pick<INote, 'left' | 'top'>;
 
@@ -25,8 +24,6 @@ interface IState {
   observer?: IntersectionObserver;
   isEditMode: boolean;
 }
-
-const Component = WithResize(Note);
 
 class NoteController extends React.Component<INoteControllerProps, IState> {
   readonly noteRef: React.RefObject<HTMLTextAreaElement>;
@@ -147,7 +144,7 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     const { position, zIndex, text, isEditMode } = this.state;
 
     return (
-      <Component
+      <Note
         noteId={noteId}
         text={text}
         left={position.left}

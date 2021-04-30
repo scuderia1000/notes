@@ -8,7 +8,6 @@ type IProps = INoteProps & {};
 
 const WithResize = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  // eslint-disable-next-line react/display-name
 ): React.FC<P & IProps> => (props): JSX.Element => {
   const { noteId, width, height, left, top, isSelected, forwardRef } = props;
 

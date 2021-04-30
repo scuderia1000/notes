@@ -4,7 +4,7 @@ import useLocalStorage from './useLocalStorage';
 const WithLocalStorage = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
   // eslint-disable-next-line react/display-name
-): React.FC<P> => (props) => {
+): React.FC<P> => (props): JSX.Element => {
   const {
     storageReplaceItem,
     storageSaveItem,

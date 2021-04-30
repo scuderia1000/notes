@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './styles.css';
+import WithResize from '../with-resize/WithResize';
 
 export interface INote {
   noteId: string;
@@ -66,4 +67,4 @@ const Note: React.FC<INoteProps> = React.forwardRef<HTMLTextAreaElement, INotePr
   },
 );
 
-export default Note;
+export default WithResize(Note);
