@@ -2,15 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { DEFAULT_NOTE, INote } from '../../components/note';
 import AddButton from '../../components/button/AddButton';
 import { generateId } from '../../utils';
-import WithLocalStorage, {
-  StorageProps,
-} from '../../components/with-local-storage/WithLocalStorage';
 import { DeleteIcon } from '../../components/icon';
 import Button, { ButtonSize } from '../../components/button/Button';
 import './styles.css';
 import BaseController from '../controllers/BaseController';
-
-type IProps = StorageProps;
+import useLocalStorage from '../../components/local-storage/useLocalStorage';
 
 const NEW_NOTE_OFFSET = 20;
 
@@ -37,14 +33,15 @@ const changeNotesOrder = (noteId: string, notes: Record<string, INote>): void =>
   });
 };
 
-const Workspace: React.FC<IProps> = ({
-  storageUpdateItemsProp,
-  storageSaveItem,
-  storageDeleteItem,
-  storageGetAll,
-  storageClearAll,
-}) => {
+const Workspace: React.FC = (): JSX.Element => {
   const [notes, setNotes] = useState<Record<string, INote>>({});
+  const {
+    storageSaveItem,
+    storageDeleteItem,
+    storageUpdateItemsProp,
+    storageGetAll,
+    storageClearAll,
+  } = useLocalStorage();
 
   const createNote = useCallback(() => {
     const notesKeys = Object.keys(notes);
@@ -117,12 +114,4 @@ const Workspace: React.FC<IProps> = ({
   );
 };
 
-Workspace.defaultProps = {
-  storageUpdateItemsProp: (): void => undefined,
-  storageSaveItem: (): void => undefined,
-  storageDeleteItem: (): void => undefined,
-  storageGetAll: (): Record<string, INote> => ({}),
-  storageClearAll: (): void => undefined,
-};
-
-export default WithLocalStorage(Workspace);
+export default Workspace;

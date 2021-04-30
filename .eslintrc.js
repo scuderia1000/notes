@@ -41,7 +41,7 @@ module.exports = {
     '@typescript-eslint/ban-types': 0,
     'no-undef': 0,
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-unused-vars': 'off',
     'no-param-reassign': 'off',
     'react/prop-types': 'off',
     'no-unused-expressions': 'off',

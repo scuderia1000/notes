@@ -13,10 +13,11 @@ export interface INote {
   minHeight?: number;
 }
 
-type IProps = Omit<INote, 'noteId' | 'order'> & {
+export type INoteProps = Omit<INote, 'order'> & {
   zIndex: number;
   isEditMode: boolean;
-  ref?: React.Ref<HTMLTextAreaElement>;
+  isSelected: boolean;
+  forwardRef: React.Ref<HTMLTextAreaElement>;
   onMouseDown(event: React.MouseEvent<HTMLTextAreaElement>): void;
   onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>): void;
   onDblClick(): void;
@@ -35,7 +36,7 @@ export const DEFAULT_NOTE: INote = {
 };
 
 // eslint-disable-next-line react/display-name
-const Note: React.FC<IProps> = React.forwardRef<HTMLTextAreaElement, IProps>(
+const Note: React.FC<INoteProps> = React.forwardRef<HTMLTextAreaElement, INoteProps>(
   (props, ref): JSX.Element => {
     const {
       text,
