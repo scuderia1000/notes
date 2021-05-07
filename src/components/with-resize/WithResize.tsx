@@ -1,8 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IPosition, ISize } from '../../types';
 import { DEFAULT_NOTE, INoteProps } from '../note';
 import useLocalStorage from '../local-storage/useLocalStorage';
 import './style.css';
+
+enum ResizeCornerType {
+  TOP_LEFT = 'top-left',
+  TOP_RIGHT = 'top-right',
+  BOTTOM_RIGHT = 'bottom-right',
+  BOTTOM_LEFT = 'bottom-left',
+}
 
 type IProps = INoteProps & {};
 
@@ -14,6 +21,7 @@ const WithResize = <P extends object>(
   const { storageReplaceItem } = useLocalStorage();
 
   const [initialMousePosition, setInitialMousePosition] = useState<IPosition>({ x: 0, y: 0 });
+  const [leftTopPosition, setLeftTopPosition] = useState<IPosition>({ x: left, y: top });
   const [initialSize, setInitialSize] = useState<ISize>({ width, height });
   const [size, setSize] = useState<ISize>({ width, height });
   const [zIndex, setZIndex] = useState<number>(1);
@@ -62,7 +70,8 @@ const WithResize = <P extends object>(
   }, [storageReplaceItem, size, setInitialSize, setZIndex, noteId, isDrag]);
 
   const onResizeMouseDown = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>): void => {
+    (cornerType: ResizeCornerType) => (event: React.MouseEvent<HTMLDivElement>): void => {
+      console.log('type', cornerType);
       setInitialMousePosition({
         x: event.pageX,
         y: event.pageY,
@@ -71,6 +80,18 @@ const WithResize = <P extends object>(
       setIsDrag(true);
     },
     [onResizeMouseMove, onResizeMouseUp],
+  );
+
+  const renderCorners = useMemo(
+    () =>
+      Object.values(ResizeCornerType).map((type) => (
+        <div
+          key={type}
+          className={`resize-corner resize-corner__${type}`}
+          onMouseDown={onResizeMouseDown(type)}
+        />
+      )),
+    [onResizeMouseDown],
   );
 
   useEffect(() => {
@@ -104,20 +125,7 @@ const WithResize = <P extends object>(
           zIndex: resizeZIndex,
         }}
       >
-        <div className="resize-items">
-          <div className="resize-corner resize-corner__top-left" onMouseDown={onResizeMouseDown} />
-          <div className="resize-corner resize-corner__top-right" onMouseDown={onResizeMouseDown} />
-        </div>
-        <div className="resize-items">
-          <div
-            className="resize-corner resize-corner__bottom-left"
-            onMouseDown={onResizeMouseDown}
-          />
-          <div
-            className="resize-corner resize-corner__bottom-right"
-            onMouseDown={onResizeMouseDown}
-          />
-        </div>
+        {renderCorners}
       </div>
       <WrappedComponent
         {...(props as P)}

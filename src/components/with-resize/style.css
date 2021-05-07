@@ -1,8 +1,5 @@
 .resize {
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     border: 2px solid deepskyblue;
 }
 
@@ -12,40 +9,47 @@
 }
 
 .resize-corner {
-    --default-margin: -6px;
-    --margin: 0;
-    --margin-top: var(--margin);
-    --margin-right: var(--margin);
-    --margin-bottom: var(--margin);
-    --margin-left: var(--margin);
+    --default-offset: -8px;
+    position: absolute;
     width: 12px;
     height: 12px;
     border-radius: 50%;
     background: deepskyblue;
     border: 1px solid gray;
-    margin: var(--margin-top) var(--margin-right) var(--margin-bottom) var(--margin-left);
 }
 
 .resize-corner__top-left {
-    --margin-top: var(--default-margin);
-    --margin-left: var(--default-margin);
+    top: var(--default-offset);
+    left: var(--default-offset);
+}
+
+.resize-corner__top-left:hover {
+    cursor: nwse-resize;
 }
 
 .resize-corner__top-right {
-    --margin-top: var(--default-margin);
-    --margin-right: var(--default-margin);
+    top: var(--default-offset);
+    right: var(--default-offset);
+}
+
+.resize-corner__top-right:hover {
+    cursor: nesw-resize;
 }
 
 .resize-corner__bottom-right {
-    --margin-right: var(--default-margin);
-    --margin-bottom: var(--default-margin);
+    right: var(--default-offset);
+    bottom: var(--default-offset);
+}
+
+.resize-corner__bottom-right:hover {
+    cursor: nwse-resize;
 }
 
 .resize-corner__bottom-left {
-    --margin-left: var(--default-margin);
-    --margin-bottom: var(--default-margin);
+    left: var(--default-offset);
+    bottom: var(--default-offset);
 }
 
-.resize-corner:hover {
-    cursor: nwse-resize;
+.resize-corner__bottom-left:hover {
+    cursor: nesw-resize;
 }
