@@ -9,7 +9,7 @@ type IProps = INoteProps & {};
 const WithResize = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
 ): React.FC<P & IProps> => (props): JSX.Element => {
-  const { noteId, width, height, left, top, isSelected, forwardRef } = props;
+  const { noteId, width, height, left, top, isSelected, forwardRef, zIndex: noteZIndex } = props;
 
   const { storageReplaceItem } = useLocalStorage();
 
@@ -18,6 +18,8 @@ const WithResize = <P extends object>(
   const [size, setSize] = useState<ISize>({ width, height });
   const [zIndex, setZIndex] = useState<number>(1);
   const [isDrag, setIsDrag] = useState<boolean>(false);
+
+  const resizeZIndex = noteZIndex > zIndex ? noteZIndex : zIndex;
 
   const onResizeMouseMove = useCallback(
     (event: MouseEvent): void => {
@@ -75,7 +77,6 @@ const WithResize = <P extends object>(
     if (isDrag) {
       document.addEventListener('mousemove', onResizeMouseMove);
     }
-
     return (): void => {
       document.removeEventListener('mousemove', onResizeMouseMove);
     };
@@ -85,7 +86,6 @@ const WithResize = <P extends object>(
     if (isDrag) {
       document.addEventListener('mouseup', onResizeMouseUp);
     }
-
     return (): void => {
       document.removeEventListener('mouseup', onResizeMouseUp);
     };
@@ -101,10 +101,23 @@ const WithResize = <P extends object>(
           opacity: isSelected ? 1 : 0,
           width: size.width + 20,
           height: size.height + 30,
-          zIndex,
+          zIndex: resizeZIndex,
         }}
       >
-        <div className="resize-corner" onMouseDown={onResizeMouseDown} />
+        <div className="resize-items">
+          <div className="resize-corner resize-corner__top-left" onMouseDown={onResizeMouseDown} />
+          <div className="resize-corner resize-corner__top-right" onMouseDown={onResizeMouseDown} />
+        </div>
+        <div className="resize-items">
+          <div
+            className="resize-corner resize-corner__bottom-left"
+            onMouseDown={onResizeMouseDown}
+          />
+          <div
+            className="resize-corner resize-corner__bottom-right"
+            onMouseDown={onResizeMouseDown}
+          />
+        </div>
       </div>
       <WrappedComponent
         {...(props as P)}

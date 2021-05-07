@@ -2,6 +2,9 @@ import * as React from 'react';
 import './styles.css';
 import WithResize from '../with-resize/WithResize';
 
+export const NEW_NOTE_OFFSET = 20;
+export const NOTE_DEFAULT_SIZE = 200;
+
 export interface INote {
   noteId: string;
   text: string;
@@ -22,6 +25,7 @@ export type INoteProps = Omit<INote, 'order'> & {
   onMouseDown(event: React.MouseEvent<HTMLTextAreaElement>): void;
   onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>): void;
   onDblClick(): void;
+  onResize?(): void;
 };
 
 export const DEFAULT_NOTE: INote = {
@@ -30,8 +34,8 @@ export const DEFAULT_NOTE: INote = {
   top: 120,
   left: 30,
   order: 0,
-  width: 200,
-  height: 200,
+  width: NOTE_DEFAULT_SIZE,
+  height: NOTE_DEFAULT_SIZE,
   minWidth: 50,
   minHeight: 50,
 };
@@ -53,16 +57,17 @@ const Note: React.FC<INoteProps> = React.forwardRef<HTMLTextAreaElement, INotePr
     } = props;
 
     return (
-      <textarea
-        ref={ref}
-        className="note"
-        style={{ left, top, zIndex, width, height }}
-        value={text}
-        readOnly={!isEditMode}
-        onMouseDown={onMouseDown}
-        onChange={onTextChange}
-        onDoubleClick={onDblClick}
-      />
+      <div className="note" style={{ left, top, width, height, zIndex }}>
+        <textarea
+          className="note-input"
+          ref={ref}
+          value={text}
+          readOnly={!isEditMode}
+          onMouseDown={onMouseDown}
+          onChange={onTextChange}
+          onDoubleClick={onDblClick}
+        />
+      </div>
     );
   },
 );

@@ -16,8 +16,8 @@ const BaseController: React.FC<IProps> = ({ items, moveNoteToFront, deleteNote }
     ({ target }: { target: EventTarget | null }): void => {
       if (!target) return;
 
-      const targetClass = (target as Element).className;
-      if (!['note', 'resize-corner', 'resize'].includes(targetClass)) {
+      const targetClass = (target as Element).classList[0];
+      if (!['note', 'note-input', 'resize-corner', 'resize'].includes(targetClass)) {
         setSelectedNoteId('');
       }
     },

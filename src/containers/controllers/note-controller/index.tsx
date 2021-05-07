@@ -4,7 +4,7 @@ import WithLocalStorage from '../../../components/local-storage/WithLocalStorage
 import { isIntersects } from '../../../utils';
 import { IPosition } from '../../../types';
 
-type NotePosition = Pick<INote, 'left' | 'top'>;
+type NotePosition = Pick<INote, 'top' | 'left'>;
 
 export interface INoteControllerProps {
   note: INote;
@@ -32,13 +32,13 @@ class NoteController extends React.Component<INoteControllerProps, IState> {
     super(props);
 
     const { note } = props;
-    const { left, top } = note;
+    const { top, left } = note;
     this.state = {
       zIndex: 1,
       text: note.text,
       position: {
-        left,
         top,
+        left,
       },
       mouseNoteOffset: {
         x: 0,

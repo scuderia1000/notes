@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { DEFAULT_NOTE, INote } from '../../components/note';
+import { DEFAULT_NOTE, INote, NEW_NOTE_OFFSET } from '../../components/note';
 import AddButton from '../../components/button/AddButton';
 import { generateId } from '../../utils';
 import { DeleteIcon } from '../../components/icon';
@@ -7,8 +7,6 @@ import Button, { ButtonSize } from '../../components/button/Button';
 import './styles.css';
 import BaseController from '../controllers/BaseController';
 import useLocalStorage from '../../components/local-storage/useLocalStorage';
-
-const NEW_NOTE_OFFSET = 20;
 
 const createNewNote = (notesLength: number): INote => ({
   ...DEFAULT_NOTE,
