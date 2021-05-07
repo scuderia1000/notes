@@ -1,32 +1,40 @@
 .button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.20), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
-    border-radius: 50%;
+  --min-width: 0;
+  --height: 0;
+  --size-XS: 24px;
+  --size-S: 32px;
+  --size-M: 40px;
+  --size-L: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--min-width);
+  height: var(--height);
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.20), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 50%;
 }
 
 .button:hover {
-    cursor: pointer;
-    background-color: #d5d5d5;
+  cursor: pointer;
+  background-color: #d5d5d5;
 }
 
 .button_size-XS {
-    min-width: 24px;
-    height: 24px;
+  --min-width: var(--size-XS);
+  --height: var(--size-XS);
 }
 
 .button_size-S {
-    min-width: 32px;
-    height: 32px;
+  --min-width: var(--size-S);
+  --height: var(--size-S);
 }
 
 .button_size-M {
-    min-width: 40px;
-    height: 40px;
+  --min-width: var(--size-M);
+  --height: var(--size-M);
 }
 
 .button_size-L {
-    min-width: 48px;
-    height: 48px;
+  --min-width: var(--size-L);
+  --height: var(--size-L);
 }
